@@ -1,107 +1,114 @@
-# Logging Middleware System
+# Logging Middleware
 
-A robust Node.js logging middleware built to interact with an external Evaluation Service API. This system features structured logging, input validation, and an automatic authentication flow that includes token caching and refreshing.
+## 📌 Overview
 
-## 📌 Project Features
-- **Structured Logging:** Enforces specific stack, level, and package formats.
-- **Authentication System:** Auto-generates, caches, and refreshes the Bearer token for API communication.
-- **Error Handling:** Gracefully handles invalid inputs and API errors.
-- **Clean Architecture:** Modular structure dividing services, utilities, config, and middleware.
+This project implements a reusable logging middleware that sends structured logs to an external test server API.
+It includes authentication, token handling, and validation of log inputs.
 
-## 📁 Project Structure
+---
 
-```text
-logging-middleware/
-│
-├── src/
-│   ├── middleware/
-│   │     └── logger.js       # Core logging logic and validation
-│   │
-│   ├── services/
-│   │     └── authService.js  # Authentication and registration logic
-│   │
-│   ├── utils/
-│   │     └── apiClient.js    # Axios instance configuration
-│   │
-│   ├── config/
-│   │     └── config.js       # Environment variables loader
-│   │
-│   └── app.js                # Demo entry point
-│
-├── .env                      # Environment variables
-├── package.json
-└── README.md
-```
+## ⚙️ Tech Stack
 
-## ⚙️ Setup Instructions
+* Node.js
+* Axios
+* dotenv
 
-### 1. Install Dependencies
-Make sure you have Node.js installed, then run:
+---
+
+## 🚀 Setup Instructions
+
 ```bash
 npm install
-```
-
-### 2. Configure Environment Variables
-Open the `.env` file and fill in your registration details under **Registration Details**. 
-Leave `CLIENT_ID` and `CLIENT_SECRET` blank for now.
-
-### 3. Register Client
-Run the application to trigger the registration process:
-```bash
-node src/app.js
-```
-*If registration is successful, the console will output a `CLIENT_ID` and `CLIENT_SECRET`.*
-
-### 4. Update Client Credentials
-Copy the outputted `CLIENT_ID` and `CLIENT_SECRET` and paste them into your `.env` file under **Client Credentials**.
-
-### 5. Run the Application
-Run the demo again. This time, it will authenticate, get a token, and run several test logs:
-```bash
 node src/app.js
 ```
 
-## 📝 API Explanation
+---
 
-### Registration (`POST /register`)
-- **Purpose**: Obtain a long-lived `clientID` and `clientSecret`.
-- **Trigger**: Automatically runs in `app.js` if the `.env` file is missing client credentials.
+## 🔐 Authentication Flow
 
-### Authentication (`POST /auth`)
-- **Purpose**: Exchange client credentials + registration details for a short-lived `access_token`.
-- **Handling**: `authService.js` automatically calls this before logging if no valid token is cached in memory.
+1. Register using the Register API to obtain:
 
-### Logging (`POST /logs`)
-- **Purpose**: Send the validated log to the external system.
-- **Validation Rules**:
-  - **Stack**: `backend`, `frontend`
-  - **Level**: `debug`, `info`, `warn`, `error`, `fatal`
-  - **Package (Backend)**: `cache`, `controller`, `cron_job`, `db`, `domain`, `handler`, `repository`, `route`, `service`
-  - **Package (Frontend)**: `api`, `component`, `hook`, `page`, `state`, `style`
-  - **Package (Both)**: `auth`, `config`, `middleware`, `utils`
+   * clientID
+   * clientSecret
 
-## 🧪 Example Usage
+2. Use Auth API to generate:
 
-You can use the `Log` function anywhere in your Node.js application by importing it:
+   * access_token
 
-```javascript
-const Log = require('./src/middleware/logger');
+3. Use the token in Log API requests.
 
-// Example: Successful Log
-Log('backend', 'error', 'handler', 'received string, expected bool');
+---
 
-// Example: Invalid Log (will be caught and handled gracefully)
-Log('database', 'info', 'db', 'Connecting to DB...');
+## 📡 Log Function
+
+```js
+Log(stack, level, package, message)
 ```
 
-## 📸 API Output Screenshots
+### Parameters:
 
-### 1. Registration API Response
-![Registration API](registration_api.png)
+* **stack** → backend / frontend
+* **level** → debug / info / warn / error / fatal
+* **package** → depends on stack
+* **message** → log message
 
-### 2. Authentication API Response
-![Authentication API](auth_api.png)
+---
 
-### 3. Log API Response
-![Log API](logs_api.png)
+## 📊 Example Log
+
+```js
+Log("backend", "error", "handler", "received string, expected bool")
+```
+
+---
+
+## ⚠️ Error Handling
+
+Invalid inputs (e.g., wrong package name) return:
+
+```json
+{
+  "message": "invalid package"
+}
+```
+
+---
+
+## 📸 Screenshots
+
+### Registration API
+
+![Registration](./screenshots/registration.png)
+
+### Auth API
+
+![Auth](./screenshots/auth.png)
+
+### Log API (Error Case)
+
+![Log Error](./screenshots/log_error.png)
+
+---
+
+## 📁 Folder Structure
+
+```
+logging_middleware/
+├── src/
+├── screenshots/
+├── README.md
+```
+
+---
+
+## ✅ Features
+
+* Reusable logging function
+* API integration with authentication
+* Structured logging
+* Error handling
+
+---
+
+## 👤 Author
 

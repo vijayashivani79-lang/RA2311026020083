@@ -93,3 +93,15 @@ Log('backend', 'error', 'handler', 'received string, expected bool');
 // Example: Invalid Log (will be caught and handled gracefully)
 Log('database', 'info', 'db', 'Connecting to DB...');
 ```
+
+## 📸 API Output Screenshots
+
+### 1. Registration API Response
+![Registration API](registration_api.png)
+
+### 2. Authentication API Response
+![Authentication API](auth_api.png)
+
+### 3. Log API Response
+![Log API](logs_api.png)
+
